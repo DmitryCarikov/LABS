@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import OrdersPage from './pages/OrdersPage';
 import ClientsPage from './pages/ClientsPage';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
