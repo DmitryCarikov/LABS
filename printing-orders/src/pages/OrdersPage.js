@@ -1,11 +1,12 @@
 import React from 'react';
 import OrderList from '../components/OrderList';
+import { Container } from '@mui/material';
 
 const OrdersPage = () => {
     return (
-        <div>
+        <Container>
             <OrderList />
-        </div>
+        </Container>
     );
 };
 

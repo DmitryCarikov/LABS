@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import '../App.css'; // добавьте стили для выделения
+import {
+    Container,
+    Typography,
+    List,
+    ListItem,
+    ListItemText,
+    Checkbox,
+    TextField,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from '@mui/material';
 
 const ClientList = () => {
     const [clients, setClients] = useState([]);
@@ -47,53 +61,93 @@ const ClientList = () => {
     };
 
     return (
-        <div>
-            <h2>Clients</h2>
-            <ul>
+        <Container>
+            <Typography variant="h2" gutterBottom>Clients</Typography>
+            <List>
                 {clients.map(client => (
-                    <li
+                    <ListItem
                         key={client.id}
-                        className={selectedClients.includes(client.id) ? 'selected' : ''}
+                        dense
+                        button
+                        onClick={() => handleSelectClient(client.id)}
+                        selected={selectedClients.includes(client.id)}
                     >
-                        <input
-                            type="checkbox"
+                        <Checkbox
                             checked={selectedClients.includes(client.id)}
-                            onChange={() => handleSelectClient(client.id)}
+                            tabIndex={-1}
+                            disableRipple
                         />
-                        {client.name}
-                    </li>
+                        <ListItemText primary={client.name} />
+                    </ListItem>
                 ))}
-            </ul>
+            </List>
 
-            <h3>Add New Client</h3>
-            <input
-                type="text"
-                placeholder="Client Name"
+            <Typography variant="h3" gutterBottom>Add New Client</Typography>
+            <TextField
+                label="Client Name"
+                variant="outlined"
                 value={newClient}
                 onChange={(e) => setNewClient(e.target.value)}
+                fullWidth
+                margin="normal"
             />
-            <button onClick={handleAddClient}>Add Client</button>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddClient}
+                fullWidth
+            >
+                Add Client
+            </Button>
 
-            <button onClick={handleEditClients} disabled={selectedClients.length !== 1}>
+            <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleEditClients}
+                disabled={selectedClients.length !== 1}
+                fullWidth
+                sx={{ mt: 2 }}
+            >
                 Edit Selected Client
-            </button>
-            <button onClick={handleDeleteClients} disabled={selectedClients.length === 0}>
+            </Button>
+            <Button
+                variant="contained"
+                color="error"
+                onClick={handleDeleteClients}
+                disabled={selectedClients.length === 0}
+                fullWidth
+                sx={{ mt: 2 }}
+            >
                 Delete Selected Clients
-            </button>
+            </Button>
 
             {editClient && (
-                <div>
-                    <h3>Edit Client</h3>
-                    <input
-                        type="text"
-                        placeholder="Client Name"
-                        value={editClient.name}
-                        onChange={(e) => setEditClient({ ...editClient, name: e.target.value })}
-                    />
-                    <button onClick={handleSaveEditClient}>Save Changes</button>
-                </div>
+                <Dialog open={Boolean(editClient)} onClose={() => setEditClient(null)}>
+                    <DialogTitle>Edit Client</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Edit the name of the client.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            label="Client Name"
+                            fullWidth
+                            value={editClient.name}
+                            onChange={(e) => setEditClient({ ...editClient, name: e.target.value })}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setEditClient(null)} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSaveEditClient} color="primary">
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             )}
-        </div>
+        </Container>
     );
 };
 
