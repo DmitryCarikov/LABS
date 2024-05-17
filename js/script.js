@@ -34,5 +34,5 @@ document.addEventListener("DOMContentLoaded", function() {
         searchInput.placeholder = "Search for images...";
     });
 
-    fetchImages("nature"); // Initial load with default search
+    fetchImages("nature");
 });
