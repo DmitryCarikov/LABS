@@ -15,10 +15,20 @@ document.addEventListener("DOMContentLoaded", function() {
     function displayImages(images) {
         gallery.innerHTML = "";
         images.forEach(image => {
+            const imgContainer = document.createElement("div");
+            imgContainer.className = "img-container";
+
             const imgElement = document.createElement("img");
             imgElement.src = image.urls.small;
             imgElement.alt = image.alt_description;
-            gallery.appendChild(imgElement);
+
+            const descriptionElement = document.createElement("p");
+            descriptionElement.textContent = image.alt_description || "No description available";
+            descriptionElement.className = "img-description";
+
+            imgContainer.appendChild(imgElement);
+            imgContainer.appendChild(descriptionElement);
+            gallery.appendChild(imgContainer);
         });
     }
 
