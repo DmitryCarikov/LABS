@@ -84,4 +84,4 @@ ItemsTable.propTypes = {
 
 // Вставляем компонент в DOM
 const rootElement = document.getElementById('root');
-ReactDOM.render(React.createElement(ItemsTable, { companyName: "Полиграфия Агарина", items: items }), rootElement);
+ReactDOM.render(React.createElement(ItemsTable, { companyName: "Полиграфия БРУ", items: items }), rootElement);
