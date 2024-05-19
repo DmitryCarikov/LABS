@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
             imgElement.alt = image.alt_description;
 
             const descriptionElement = document.createElement("p");
-            descriptionElement.textContent = image.alt_description || "No description available";
+            descriptionElement.textContent = image.description || "No description available";
             descriptionElement.className = "img-description";
 
             imgContainer.appendChild(imgElement);
