@@ -1,68 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
-    Container,
-    Typography,
-    List,
-    ListItem,
-    ListItemText,
-    Checkbox,
-    TextField,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Box
+    Container, Typography, List, ListItem, ListItemText, Checkbox,
+    TextField, Button, Dialog, DialogActions, DialogContent,
+    DialogContentText, DialogTitle, Box
 } from '@mui/material';
+import {
+    fetchClients, addClient, deleteClients, setSelectedClients,
+    setEditClient, saveEditClient
+} from '../redux/clientsSlice';
 
 const ClientList = () => {
-    const [clients, setClients] = useState([]);
+    const dispatch = useDispatch();
+    const clients = useSelector(state => state.clients.list);
+    const selectedClients = useSelector(state => state.clients.selectedClients);
+    const editClient = useSelector(state => state.clients.editClient);
+    const clientStatus = useSelector(state => state.clients.status);
+    const error = useSelector(state => state.clients.error);
     const [newClient, setNewClient] = useState('');
-    const [editClient, setEditClient] = useState(null);
-    const [selectedClients, setSelectedClients] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        fetch(`${process.env.PUBLIC_URL}/data/clients.json`)
-            .then(response => response.json())
-            .then(data => setClients(data));
-    }, []);
+        if (clientStatus === 'idle') {
+            dispatch(fetchClients());
+        }
+    }, [clientStatus, dispatch]);
 
     const handleAddClient = () => {
         const newId = clients.length > 0 ? clients[clients.length - 1].id + 1 : 1;
         const clientToAdd = { id: newId, name: newClient };
-        setClients([...clients, clientToAdd]);
+        dispatch(addClient(clientToAdd));
         setNewClient('');
     };
 
     const handleDeleteClients = () => {
-        setClients(clients.filter(client => !selectedClients.includes(client.id)));
-        setSelectedClients([]);
+        dispatch(deleteClients(selectedClients));
+        dispatch(setSelectedClients([]));
     };
 
     const handleEditClients = () => {
         if (selectedClients.length === 1) {
             const clientToEdit = clients.find(client => client.id === selectedClients[0]);
-            setEditClient(clientToEdit);
+            dispatch(setEditClient(clientToEdit));
         }
     };
 
     const handleSaveEditClient = () => {
-        setClients(clients.map(client => (client.id === editClient.id ? editClient : client)));
-        setEditClient(null);
-        setSelectedClients([]);
+        dispatch(saveEditClient(editClient));
+        dispatch(setEditClient(null));
+        dispatch(setSelectedClients([]));
     };
 
     const handleSelectClient = (id) => {
-        if (selectedClients.includes(id)) {
-            setSelectedClients(selectedClients.filter(clientId => clientId !== id));
-        } else {
-            setSelectedClients([...selectedClients, id]);
-        }
+        const newSelectedClients = selectedClients.includes(id)
+            ? selectedClients.filter(clientId => clientId !== id)
+            : [...selectedClients, id];
+        dispatch(setSelectedClients(newSelectedClients));
     };
 
-    const filteredClients = clients.filter(client => client.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredClients = clients.filter(client =>
+        client.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <Container>
@@ -77,6 +75,8 @@ const ClientList = () => {
                     margin="normal"
                 />
             </Box>
+            {clientStatus === 'loading' && <p>Loading...</p>}
+            {clientStatus === 'failed' && <p>{error}</p>}
             <List>
                 {filteredClients.map(client => (
                     <ListItem
@@ -136,7 +136,7 @@ const ClientList = () => {
             </Button>
 
             {editClient && (
-                <Dialog open={Boolean(editClient)} onClose={() => setEditClient(null)}>
+                <Dialog open={Boolean(editClient)} onClose={() => dispatch(setEditClient(null))}>
                     <DialogTitle>Edit Client</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -148,11 +148,11 @@ const ClientList = () => {
                             label="Client Name"
                             fullWidth
                             value={editClient.name}
-                            onChange={(e) => setEditClient({ ...editClient, name: e.target.value })}
+                            onChange={(e) => dispatch(setEditClient({ ...editClient, name: e.target.value }))}
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setEditClient(null)} color="primary">
+                        <Button onClick={() => dispatch(setEditClient(null))} color="primary">
                             Cancel
                         </Button>
                         <Button onClick={handleSaveEditClient} color="primary">

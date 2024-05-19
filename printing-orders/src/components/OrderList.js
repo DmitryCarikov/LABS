@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Container,
     Typography,
@@ -21,22 +22,26 @@ import {
 } from '@mui/material';
 import Modal from './Modal';
 import { saveAs } from 'file-saver';
+import { fetchOrders, addOrder, deleteOrders, setSelectedOrders, setEditOrder, saveEditOrder } from '../redux/ordersSlice';
 import '../App.css';
 
 const OrderList = () => {
-    const [orders, setOrders] = useState([]);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [editOrder, setEditOrder] = useState(null);
+    const dispatch = useDispatch();
+    const orders = useSelector(state => state.orders.list);
+    const selectedOrders = useSelector(state => state.orders.selectedOrders);
+    const editOrder = useSelector(state => state.orders.editOrder);
+    const orderStatus = useSelector(state => state.orders.status);
+    const error = useSelector(state => state.orders.error);
     const [newOrder, setNewOrder] = useState({ name: '', description: '', client: '', status: '' });
-    const [selectedOrders, setSelectedOrders] = useState([]);
     const [filterStatus, setFilterStatus] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     useEffect(() => {
-        fetch(`${process.env.PUBLIC_URL}/data/orders.json`)
-            .then(response => response.json())
-            .then(data => setOrders(data));
-    }, []);
+        if (orderStatus === 'idle') {
+            dispatch(fetchOrders());
+        }
+    }, [orderStatus, dispatch]);
 
     const handleOrderClick = (order) => {
         setSelectedOrder(order);
@@ -45,34 +50,33 @@ const OrderList = () => {
     const handleAddOrder = () => {
         const newId = orders.length > 0 ? orders[orders.length - 1].id + 1 : 1;
         const orderToAdd = { ...newOrder, id: newId };
-        setOrders([...orders, orderToAdd]);
+        dispatch(addOrder(orderToAdd));
         setNewOrder({ name: '', description: '', client: '', status: '' });
     };
 
     const handleDeleteOrders = () => {
-        setOrders(orders.filter(order => !selectedOrders.includes(order.id)));
-        setSelectedOrders([]);
+        dispatch(deleteOrders(selectedOrders));
+        dispatch(setSelectedOrders([]));
     };
 
     const handleEditOrders = () => {
         if (selectedOrders.length === 1) {
             const orderToEdit = orders.find(order => order.id === selectedOrders[0]);
-            setEditOrder(orderToEdit);
+            dispatch(setEditOrder(orderToEdit));
         }
     };
 
     const handleSaveEditOrder = () => {
-        setOrders(orders.map(order => (order.id === editOrder.id ? editOrder : order)));
-        setEditOrder(null);
-        setSelectedOrders([]);
+        dispatch(saveEditOrder(editOrder));
+        dispatch(setEditOrder(null));
+        dispatch(setSelectedOrders([]));
     };
 
     const handleSelectOrder = (id) => {
-        if (selectedOrders.includes(id)) {
-            setSelectedOrders(selectedOrders.filter(orderId => orderId !== id));
-        } else {
-            setSelectedOrders([...selectedOrders, id]);
-        }
+        const newSelectedOrders = selectedOrders.includes(id)
+            ? selectedOrders.filter(orderId => orderId !== id)
+            : [...selectedOrders, id];
+        dispatch(setSelectedOrders(newSelectedOrders));
     };
 
     const handleExportOrders = () => {
@@ -111,6 +115,8 @@ const OrderList = () => {
                     margin="normal"
                 />
             </Box>
+            {orderStatus === 'loading' && <p>Loading...</p>}
+            {orderStatus === 'failed' && <p>{error}</p>}
             <List>
                 {filteredOrders.map(order => (
                     <ListItem
@@ -203,7 +209,7 @@ const OrderList = () => {
             </Button>
 
             {editOrder && (
-                <Dialog open={Boolean(editOrder)} onClose={() => setEditOrder(null)}>
+                <Dialog open={Boolean(editOrder)} onClose={() => dispatch(setEditOrder(null))}>
                     <DialogTitle>Edit Order</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -215,32 +221,32 @@ const OrderList = () => {
                             label="Name"
                             fullWidth
                             value={editOrder.name}
-                            onChange={(e) => setEditOrder({ ...editOrder, name: e.target.value })}
+                            onChange={(e) => dispatch(setEditOrder({ ...editOrder, name: e.target.value }))}
                         />
                         <TextField
                             margin="dense"
                             label="Description"
                             fullWidth
                             value={editOrder.description}
-                            onChange={(e) => setEditOrder({ ...editOrder, description: e.target.value })}
+                            onChange={(e) => dispatch(setEditOrder({ ...editOrder, description: e.target.value }))}
                         />
                         <TextField
                             margin="dense"
                             label="Client"
                             fullWidth
                             value={editOrder.client}
-                            onChange={(e) => setEditOrder({ ...editOrder, client: e.target.value })}
+                            onChange={(e) => dispatch(setEditOrder({ ...editOrder, client: e.target.value }))}
                         />
                         <TextField
                             margin="dense"
                             label="Status"
                             fullWidth
                             value={editOrder.status}
-                            onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}
+                            onChange={(e) => dispatch(setEditOrder({ ...editOrder, status: e.target.value }))}
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setEditOrder(null)} color="primary">
+                        <Button onClick={() => dispatch(setEditOrder(null))} color="primary">
                             Cancel
                         </Button>
                         <Button onClick={handleSaveEditOrder} color="primary">
