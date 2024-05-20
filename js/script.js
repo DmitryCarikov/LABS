@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const imgElement = document.createElement("img");
             imgElement.src = image.urls.small;
-            imgElement.alt = image.alt_description;
+            imgElement.alt = image.description;
 
             const descriptionElement = document.createElement("p");
             descriptionElement.textContent = image.description || "No description available";
