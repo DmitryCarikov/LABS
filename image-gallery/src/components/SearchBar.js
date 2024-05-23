@@ -27,7 +27,6 @@ class SearchBar extends Component {
                     autoFocus
                     autoComplete="off"
                 />
-                <button type="submit">Search</button>
                 <button type="button" onClick={this.handleClear}>Clear</button>
             </form>
         );

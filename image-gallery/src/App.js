@@ -49,7 +49,10 @@ class App extends Component {
         <Header />
         <SearchBar onSearch={this.handleSearch} query={query} />
         {error && <div className="error">{error}</div>}
-        <ImageGallery images={images} />
+        {images.length === 0 && !error && (
+          <div className="no-images">Не найдено изображений по вашему запросу</div>
+        )}
+        {images.length > 0 && <ImageGallery images={images} />}
         <Footer />
       </div>
     );
