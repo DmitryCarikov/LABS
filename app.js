@@ -1,4 +1,3 @@
-// Определяем массив объектов
 const items = [
     {
         name: "Брошюра",
@@ -20,7 +19,6 @@ const items = [
     }
 ];
 
-// Создаем компонент для отображения таблицы
 const ItemsTable = (props) => {
     const { companyName, items } = props;
 
@@ -41,8 +39,8 @@ const ItemsTable = (props) => {
                 React.createElement(
                     'tr',
                     null,
-                    React.createElement('th', null, 'Наименование'),
-                    React.createElement('th', null, 'Описание'),
+                    React.createElement('th', { style: {color: 'red' }}, 'Наименование'),
+                    React.createElement('th', { className: 'my-class'}, 'Описание'),
                     React.createElement('th', null, 'Цена'),
                     React.createElement('th', null, 'Изображение')
                 )
@@ -69,7 +67,6 @@ const ItemsTable = (props) => {
     );
 };
 
-// Определяем типы для props
 ItemsTable.propTypes = {
     companyName: PropTypes.string.isRequired,
     items: PropTypes.arrayOf(
@@ -82,6 +79,5 @@ ItemsTable.propTypes = {
     ).isRequired
 };
 
-// Вставляем компонент в DOM
 const rootElement = document.getElementById('root');
 ReactDOM.render(React.createElement(ItemsTable, { companyName: "Полиграфия БРУ", items: items }), rootElement);
