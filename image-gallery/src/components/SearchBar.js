@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 
 class SearchBar extends Component {
     handleInputChange = (event) => {
-        this.props.onSearch(event.target.value);
+        this.props.updateQuery(event.target.value);
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
-        if (this.props.query.trim() !== '') {
-            this.props.onSearch(this.props.query);
-        }
-    }
+      if (this.props.query.trim() !== '') {
+         this.props.onSearch(this.props.query);
+     }
+   }
 
     handleClear = () => {
+        this.props.updateQuery('');
         this.props.onSearch('');
     }
 
@@ -27,7 +28,9 @@ class SearchBar extends Component {
                     autoFocus
                     autoComplete="off"
                 />
+                <button type="submit">Search</button>
                 <button type="button" onClick={this.handleClear}>Clear</button>
+
             </form>
         );
     }

@@ -10,7 +10,8 @@ class App extends Component {
     this.state = {
       images: [],
       query: '',
-      error: null
+      error: null,
+      searched: false
     };
   }
 
@@ -18,9 +19,14 @@ class App extends Component {
     this.setState({ query }, this.fetchImages);
   }
 
+  updateQuery = (query) => {
+    this.setState({query});
+  }
+
   fetchImages = async () => {
     const { query } = this.state;
     if (!query.trim()) {
+      this.setState({images: [], error: null, searched: false})
       return;
     }
 
@@ -32,7 +38,7 @@ class App extends Component {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      this.setState({ images: data.results, error: null });
+      this.setState({ images: data.results, error: null, searched: true });
     } catch (error) {
       this.setState({ error: error.message });
     }
@@ -43,13 +49,13 @@ class App extends Component {
   }
 
   render() {
-    const { images, query, error } = this.state;
+    const { images, query, error, searched } = this.state;
     return (
       <div>
         <Header />
-        <SearchBar onSearch={this.handleSearch} query={query} />
+        <SearchBar onSearch={this.handleSearch} query={query} updateQuery={this.updateQuery} />
         {error && <div className="error">{error}</div>}
-        {images.length === 0 && !error && (
+        {searched && images.length === 0 && !error && (
           <div className="no-images">Не найдено изображений по вашему запросу</div>
         )}
         {images.length > 0 && <ImageGallery images={images} />}
