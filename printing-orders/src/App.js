@@ -6,6 +6,7 @@ import OrdersPage from './pages/OrdersPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
+import NotFoundPage from './pages/NotFoundPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -20,6 +21,7 @@ const App = () => {
                 <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="*" element={<NotFoundPage/>} />
             </Routes>
             <Footer />
         </Router>
