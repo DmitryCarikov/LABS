@@ -1,16 +1,16 @@
 [
     {
         "id": 1,
-        "name": "Сделат визитки лаборатории",
-        "description": "Сделат визитки лаборатории",
-        "client": "Александр Алекснадр",
+        "name": "Make visit card of labaratory",
+        "description": "Make visit card of labaratory",
+        "client": "Alexandr Alexandrovich",
         "status": "Pending"
     },
     {
         "id": 2,
-        "name": "Сделать плакат",
-        "description": "Сделать плакат А3",
-        "client": "Михаил Михайлович",
+        "name": "Make poster",
+        "description": "Make poster of A3 format",
+        "client": "Mihail Mihaylovich",
         "status": "Cancelled"
     }
 ]
