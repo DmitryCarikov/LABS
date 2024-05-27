@@ -28,7 +28,7 @@
         }
 
         async function sendData() {
-            const newData = { id: 3, name: 'Order 3' };
+            const newData = { id: 4, name: 'Order 5' };
             const response = await postData('/api/data/submit', newData);
             document.getElementById('response').innerText = JSON.stringify(response, null, 2);
             getData();

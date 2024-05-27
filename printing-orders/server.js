@@ -6,34 +6,28 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Read JSON data
 const readData = (file) => {
     const data = fs.readFileSync(path.join(__dirname, file));
     return JSON.parse(data);
 };
 
-// Write JSON data
 const writeData = (file, data) => {
     fs.writeFileSync(path.join(__dirname, file), JSON.stringify(data, null, 2));
 };
 
-// GET service to return data
 app.get('/api/data', (req, res) => {
     const data = readData('data.json');
     res.json(data);
 });
 
-// POST service to return data
 app.post('/api/data', (req, res) => {
     const data = readData('data.json');
     res.json(data);
 });
 
-// POST service to accept data
 app.post('/api/data/submit', (req, res) => {
     const newData = req.body;
     const data = readData('data.json');
@@ -42,12 +36,10 @@ app.post('/api/data/submit', (req, res) => {
     res.json({ message: 'Data received' });
 });
 
-// GET service to return HTML page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Service to return data in different formats based on Accept header
 app.get('/api/data/format', (req, res) => {
     const data = readData('data.json');
     const acceptHeader = req.headers.accept;
@@ -73,7 +65,6 @@ app.get('/api/data/format', (req, res) => {
     }
 });
 
-// Start server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
